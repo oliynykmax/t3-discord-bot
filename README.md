@@ -29,7 +29,7 @@ Requirements: Podman, Bun, [fnox](https://fnox.jdx.dev), a T3 Code install on th
 - The agents run with **full access inside the container**. Treat the container as untrusted, give it only credentials you are happy to hand to everyone on the allowlist, and keep the GitHub App limited to the repos it needs.
 - The bot refuses everyone unless `ALLOWED_USER_IDS` or `ALLOWED_ROLE_IDS` is set.
 - `./home` holds copies of your provider logins. It is git-ignored and must stay local.
-- `run.sh` forwards only `DISCORD_TOKEN`, `GH_APP_PRIVATE_KEY` and `COPILOT_GITHUB_TOKEN`. fnox also merges any global fnox secrets into the environment of `fnox exec`, so never switch it to forwarding the whole environment.
+- `run.sh` passes only `DISCORD_TOKEN`, `GH_APP_PRIVATE_KEY` and `COPILOT_GITHUB_TOKEN` to the container, by name.
 - File attachments from agents are limited to images, PDFs, video and text under 9 MB, from worktrees, `/tmp`, `/home/node/shared`, `/home/node/uploads` and `ATTACH_EXTRA_ROOTS`.
 
 ## Layout
