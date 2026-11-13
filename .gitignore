@@ -1,0 +1,10 @@
+# Local-only state and credentials. Never commit.
+home/
+secrets/
+secrets.env
+bot.env
+.env
+.env.*
+*.pem
+*.key
+node_modules/

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export GH_TOKEN="$(bun /opt/bot/ghapp.ts token)"
+exec /usr/local/bin/gh-real "$@"

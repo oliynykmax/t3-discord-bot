@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# pr-image <file.png> : upload a screenshot to the pr-screenshots branch, print markdown to paste in the PR body
+set -euo pipefail
+f=${1:?usage: pr-image <file.png>}
+repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+branch=$(git rev-parse --abbrev-ref HEAD | tr '/' '-')
+path="$branch/$(date +%s)-$(basename "$f")"
+if ! gh api "repos/$repo/branches/pr-screenshots" >/dev/null 2>&1; then
+  sha=$(gh api "repos/$repo/git/ref/heads/main" -q .object.sha)
+  gh api -X POST "repos/$repo/git/refs" -f ref=refs/heads/pr-screenshots -f sha="$sha" >/dev/null
+fi
+gh api -X PUT "repos/$repo/contents/$path" -f message="screenshot for $branch" -f branch=pr-screenshots -f content="$(base64 -w0 "$f")" >/dev/null
+echo "![$(basename "$f")](https://github.com/$repo/blob/pr-screenshots/$path?raw=true)"

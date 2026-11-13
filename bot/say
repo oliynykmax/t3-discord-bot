@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# say [-c channel] [-f file]... [text]   post to Discord (default: the team's main channel). Text from args or stdin.
+# say --channels                          list channels
+URL=${SAY_URL:-http://127.0.0.1:3790}
+ch=""; files=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --channels) curl -fsS "$URL/channels" | jq -r '"default: \(.default)", (.channels[] | "#\(.name)  \(.id)")'; exit ;;
+    -c) ch=$2; shift 2 ;;
+    -f) files+=("$2"); shift 2 ;;
+    *) break ;;
+  esac
+done
+text="$*"; [ -z "$text" ] && [ ! -t 0 ] && text=$(cat)
+payload=$(jq -n --arg c "$ch" --arg t "$text" '{channel: $c, text: $t}' | jq --argjson f "$(printf '%s\n' "${files[@]}" | jq -R . | jq -s 'map(select(length>0))')" '. + {files: $f}')
+out=$(curl -sS -X POST "$URL/post" -H 'content-type: application/json' -d "$payload") || { echo "bot not reachable" >&2; exit 1; }
+echo "$out" | jq -r 'if .ok then "posted to #\(.channel)" + (if (.skippedFiles|length)>0 then " (skipped files: \(.skippedFiles|join(", ")))" else "" end) else "error: \(.error)" end'
+echo "$out" | jq -e .ok >/dev/null

@@ -1,0 +1,11 @@
+# Secret names only. Values live in the OS keychain (service "t3-discord-bot"), never in this file.
+# Store them with:  fnox set DISCORD_TOKEN   (prompts, hidden)
+#                   fnox set GH_APP_PRIVATE_KEY --from-file path/to/app.pem
+[providers.keychain]
+type = "keychain"
+service = "t3-discord-bot"
+
+[secrets]
+DISCORD_TOKEN= { provider = "keychain", value = "DISCORD_TOKEN", description = "Discord bot token" }
+GH_APP_PRIVATE_KEY= { provider = "keychain", value = "GH_APP_PRIVATE_KEY", description = "GitHub App private key (PEM) the agents commit and open PRs as" }
+COPILOT_GITHUB_TOKEN= { provider = "keychain", value = "COPILOT_GITHUB_TOKEN", description = "Optional: GitHub token for the Copilot provider", if_missing = "ignore" }
