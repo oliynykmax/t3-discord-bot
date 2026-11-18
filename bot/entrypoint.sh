@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 export HOME=/home/node PATH=/home/node/.local/bin:/home/node/.bun/bin:/home/node/.cargo/bin:$PATH
-mkdir -p /home/node/.local/bin && for t in gh shot pr-image say; do ln -sf /opt/bot/$t /home/node/.local/bin/$t; done
+mkdir -p /home/node/.local/bin && for t in gh shot pr-image say context-web; do ln -sf /opt/bot/$t /home/node/.local/bin/$t; done
 mkdir -p /home/node/.tailscale
 [ -x /home/node/.local/bin/tailscaled ] && tailscaled --tun=userspace-networking --state=/home/node/.tailscale/state --socket=/home/node/.tailscale/sock --socks5-server=localhost:1055 >/home/node/.tailscale/tailscaled.log 2>&1 &
 cd /home/node/workspace

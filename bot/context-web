@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Research the public web through Context.dev Answers. The API key comes only from the container environment.
+set -euo pipefail
+
+task=${*:-}
+if [[ -z $task ]]; then
+  echo 'usage: context-web <specific research question or URL>' >&2
+  exit 64
+fi
+if (( ${#task} > 1200 )); then
+  echo 'context-web: research question must be at most 1200 characters' >&2
+  exit 64
+fi
+if [[ -z ${CONTEXT_DEV_API_KEY:-} ]]; then
+  echo 'context-web: CONTEXT_DEV_API_KEY is not configured' >&2
+  exit 78
+fi
+
+jq -n --arg task "$task" '{mode:"fast", task:$task, json_format:{answer:"A concise factual answer to the research task."}, timeoutOpts:{milliseconds:30000, behavior:"return-partial"}, tags:["discord-agent"]}' \
+  | curl --fail-with-body --silent --show-error --max-time 35 \
+      -X POST https://api.context.dev/v1/web/answers \
+      -H "Authorization: Bearer ${CONTEXT_DEV_API_KEY}" \
+      -H 'content-type: application/json' \
+      --data-binary @-

@@ -20,6 +20,7 @@ Requirements: Podman, Bun, [fnox](https://fnox.jdx.dev), a T3 Code install on th
    fnox set DISCORD_TOKEN                                   # prompts, hidden
    fnox set GH_APP_PRIVATE_KEY --from-file path/to/app.pem  # then delete the .pem
    fnox set COPILOT_GITHUB_TOKEN                            # optional
+   fnox set CONTEXT_DEV_API_KEY                             # restricted Context.dev Data APIs key
    ```
 4. `./stage-home.sh` copies your provider logins into `./home` (the container's `$HOME`, git-ignored) and writes the bot's git identity. `SKILLS="a b c" ./stage-skills.sh` copies the named agent skills, and `./setup-plugins.sh` installs Claude plugins in the running container.
 5. `./run.sh` starts the container with the secrets passed by name from fnox. Logs: `podman logs -f hackbot`.
@@ -30,6 +31,7 @@ Requirements: Podman, Bun, [fnox](https://fnox.jdx.dev), a T3 Code install on th
 - The bot refuses everyone unless `ALLOWED_USER_IDS` or `ALLOWED_ROLE_IDS` is set.
 - `./home` holds copies of your provider logins. It is git-ignored and must stay local.
 - `run.sh` passes only `DISCORD_TOKEN`, `GH_APP_PRIVATE_KEY` and `COPILOT_GITHUB_TOKEN` to the container, by name.
+- `CONTEXT_DEV_API_KEY` is a restricted Data APIs key. Agents use `context-web "<question or URL>"` for sourced public-web research; it does not allow Context account administration.
 - File attachments from agents are limited to images, PDFs, video and text under 9 MB, from worktrees, `/tmp`, `/home/node/shared`, `/home/node/uploads` and `ATTACH_EXTRA_ROOTS`.
 
 ## Layout
